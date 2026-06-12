@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TriggerPoint — Design Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--sans:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;--r-sm:5px;--r-md:7px;--r-lg:11px}
+body{font-family:var(--sans);font-size:13px;background:#f0f0ee;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px 48px}
+body.dk{background:#0e0e0e}
+.page-header{width:100%;max-width:1100px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.page-title{font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#888}
+.toggle-wrap{display:flex;background:#e0dfdb;border-radius:20px;padding:2px;gap:2px}
+body.dk .toggle-wrap{background:#2a2a2a}
+.tgl{font-family:var(--sans);font-size:11px;font-weight:500;padding:4px 14px;border-radius:16px;border:none;cursor:pointer;background:none;color:#888;display:flex;align-items:center;gap:5px;transition:background .15s,color .15s}
+.tgl.on{background:#fff;color:#1a1a1a}
+body.dk .tgl.on{background:#1e1e1e;color:#e8e8e8}
+body.dk .tgl{color:#555}
+.app{width:100%;max-width:1100px;border-radius:var(--r-lg);overflow:hidden;display:flex;height:760px;border:.5px solid #d8d7d2}
+body.dk .app{border-color:#2a2a2a}
+.sb{width:196px;min-width:196px;display:flex;flex-direction:column;background:#f5f5f2;border-right:.5px solid #e0dfdb}
+body.dk .sb{background:#1a1a1a;border-color:#252525}
+.logo-row{display:flex;align-items:center;gap:9px;padding:14px 14px 12px;border-bottom:.5px solid #e0dfdb}
+body.dk .logo-row{border-color:#252525}
+.lm{width:23px;height:23px;border-radius:5px;background:#1D9E75;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#fff;flex-shrink:0}
+.ln{font-size:13px;font-weight:500;color:#1a1a1a}
+body.dk .ln{color:#e0e0e0}
+.nav{padding:8px 0;flex:1;overflow-y:auto}
+.nsec{font-size:9px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;padding:10px 14px 4px;color:#a0a09a}
+body.dk .nsec{color:#484848}
+.ni{display:flex;align-items:center;gap:8px;padding:6px 14px;font-size:12px;color:#666;cursor:pointer;user-select:none;transition:background .1s,color .1s}
+.ni:hover{background:#ebebea;color:#1a1a1a}
+body.dk .ni{color:#666}
+body.dk .ni:hover{background:#222;color:#e0e0e0}
+.ni.act{font-weight:500;color:#1a1a1a;background:#ebebea}
+body.dk .ni.act{color:#e0e0e0;background:#222}
+.ni.act .nic{color:#1D9E75}
+.nic{font-size:14px;width:16px;flex-shrink:0}
+.nb{margin-left:auto;font-size:10px;font-weight:500;padding:1px 6px;border-radius:8px;background:#E1F5EE;color:#085041}
+body.dk .nb{background:#0a3d2a;color:#5DCAA5}
+.nb.w{background:#FAEEDA;color:#854F0B}
+body.dk .nb.w{background:#3a2208;color:#EF9F27}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#fff}
+body.dk .main{background:#141414}
+.topbar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:.5px solid #e8e7e3;background:#fff}
+body.dk .topbar{background:#141414;border-color:#222}
+.tb-title{font-size:14px;font-weight:500;flex:1;color:#1a1a1a}
+body.dk .tb-title{color:#e0e0e0}
+.tb-meta{font-size:11px;color:#aaa;display:flex;align-items:center;gap:4px}
+body.dk .tb-meta{color:#444}
+.pulse{display:inline-block;width:6px;height:6px;border-radius:50%;background:#1D9E75;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.btn{font-family:var(--sans);font-size:11px;padding:5px 10px;border-radius:var(--r-md);border:.5px solid #d4d3ce;background:#fff;color:#555;cursor:pointer;display:flex;align-items:center;gap:4px;transition:background .1s,color .1s;white-space:nowrap}
+.btn:hover{background:#f5f5f2;color:#1a1a1a}
+body.dk .btn{background:#1e1e1e;border-color:#303030;color:#777}
+body.dk .btn:hover{background:#252525;color:#e0e0e0}
+.btn-p{background:#1D9E75!important;color:#fff!important;border-color:#1D9E75!important}
+.btn-p:hover{background:#0F6E56!important}
+body.dk .btn-p{background:#0F6E56!important;color:#9FE1CB!important;border-color:#0F6E56!important}
+.view{display:none;flex:1;flex-direction:column;overflow:hidden}
+.view.active{display:flex}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 16px;border-bottom:.5px solid #e8e7e3}
+body.dk .stats{border-color:#222}
+.sc{background:#f5f5f2;border-radius:var(--r-md);padding:8px 10px}
+body.dk .sc{background:#1e1e1e}
+.sc-l{font-size:10px;color:#aaa;margin-bottom:2px}
+body.dk .sc-l{color:#555}
+.sc-v{font-size:20px;font-weight:500;color:#1a1a1a}
+body.dk .sc-v{color:#e0e0e0}
+.sc-s{font-size:10px;color:#bbb}
+body.dk .sc-s{color:#3a3a3a}
+.tabbar{display:flex;padding:0 16px;border-bottom:.5px solid #e8e7e3}
+body.dk .tabbar{border-color:#222}
+.tab{font-size:12px;padding:7px 10px;cursor:pointer;color:#aaa;border-bottom:2px solid transparent;margin-bottom:-.5px;transition:color .1s;user-select:none}
+.tab:hover{color:#1a1a1a}
+.tab.act{color:#1a1a1a;border-bottom-color:#1D9E75;font-weight:500}
+body.dk .tab{color:#484848}
+body.dk .tab:hover{color:#e0e0e0}
+body.dk .tab.act{color:#e0e0e0;border-bottom-color:#1D9E75}
+.panels{display:flex;flex:1;overflow:hidden}
+.feed{flex:1;overflow-y:auto;border-right:.5px solid #e8e7e3}
+body.dk .feed{border-color:#222}
+.detail-pane{width:300px;overflow-y:auto}
+.sec-hd{font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;padding:7px 14px;border-bottom:.5px solid #e8e7e3;color:#aaa;position:sticky;top:0;z-index:2;background:#fff}
+body.dk .sec-hd{border-color:#222;color:#484848;background:#141414}
+.sig{padding:9px 14px;border-bottom:.5px solid #ebebea;cursor:pointer;transition:background .1s;border-left:2px solid transparent}
+body.dk .sig{border-color:#1f1f1f}
+.sig:hover{background:#f8f8f7}
+body.dk .sig:hover{background:#1a1a1a}
+.sig.sel{background:#f5f5f2;border-left-color:#1D9E75;padding-left:12px}
+body.dk .sig.sel{background:#1a1a1a}
+.sig-r1{display:flex;align-items:center;gap:5px;margin-bottom:3px}
+.tick{font-size:10px;font-weight:500;font-family:var(--mono);padding:1px 5px;border-radius:3px;background:#E1F5EE;color:#085041}
+body.dk .tick{background:#0a3d2a;color:#5DCAA5}
+.cp{font-size:10px;padding:1px 5px;border-radius:3px}
+.ch{background:#EAF3DE;color:#27500A}
+body.dk .ch{background:#1a2f0a;color:#97C459}
+.cm{background:#FAEEDA;color:#633806}
+body.dk .cm{background:#2e1c06;color:#EF9F27}
+.cl{background:#FCEBEB;color:#791F1F}
+body.dk .cl{background:#2d0f0f;color:#F09595}
+.st{font-size:10px;color:#bbb;margin-left:auto}
+body.dk .st{color:#3a3a3a}
+.sig-hl{font-size:11px;line-height:1.45;margin-bottom:2px;color:#1a1a1a}
+body.dk .sig-hl{color:#c8c8c8}
+.sig-src{font-size:10px;color:#bbb}
+body.dk .sig-src{color:#3a3a3a}
+.sig-tags{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap}
+.stag{font-size:10px;padding:1px 5px;border-radius:3px;border:.5px solid #e0dfdb;background:#f5f5f2;color:#666}
+body.dk .stag{background:#1e1e1e;border-color:#2a2a2a;color:#555}
+.dp{padding:14px}
+.dp-tick{font-size:10px;font-weight:500;font-family:var(--mono);color:#0F6E56;margin-bottom:4px}
+body.dk .dp-tick{color:#5DCAA5}
+.dp-hl{font-size:13px;font-weight:500;line-height:1.4;margin-bottom:5px;color:#1a1a1a}
+body.dk .dp-hl{color:#e0e0e0}
+.dp-meta{font-size:10px;color:#aaa;display:flex;gap:8px;margin-bottom:12px}
+body.dk .dp-meta{color:#444}
+.blk{border-radius:var(--r-md);padding:10px 12px;margin-bottom:10px;border:.5px solid #e8e7e3;background:#f8f8f6}
+body.dk .blk{background:#1c1c1c;border-color:#262626}
+.blk-t{font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:#aaa;margin-bottom:8px}
+body.dk .blk-t{color:#444}
+.cbr{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.cbl{font-size:11px;width:84px;flex-shrink:0;color:#555}
+body.dk .cbl{color:#777}
+.cbt{flex:1;height:4px;border-radius:2px;background:#e5e4e0}
+body.dk .cbt{background:#2a2a2a}
+.cbf{height:100%;border-radius:2px;background:#1D9E75}
+.cbp{font-size:11px;width:28px;text-align:right;color:#888}
+body.dk .cbp{color:#555}
+.ev{padding:5px 0;border-bottom:.5px solid #e8e7e3;font-size:11px;line-height:1.5;color:#3a3a3a}
+body.dk .ev{border-color:#262626;color:#999}
+.ev:last-child{border-bottom:none}
+.evc{font-size:10px;font-family:var(--mono);color:#bbb;margin-top:1px}
+body.dk .evc{color:#3a3a3a}
+.act-row{display:flex;gap:5px;margin-top:10px}
+.act-row .btn{flex:1;justify-content:center}
+.content-area{flex:1;overflow-y:auto;padding:20px 24px}
+.pg-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.pg-hd-l h2{font-size:15px;font-weight:500;color:#1a1a1a;margin-bottom:3px}
+body.dk .pg-hd-l h2{color:#e0e0e0}
+.pg-hd-l p{font-size:12px;color:#aaa}
+body.dk .pg-hd-l p{color:#555}
+.card{border:.5px solid #e5e4e0;border-radius:var(--r-lg);padding:13px 15px;margin-bottom:8px;background:#fff;cursor:pointer;transition:background .1s;display:flex;align-items:flex-start;gap:12px}
+body.dk .card{background:#1a1a1a;border-color:#262626}
+.card:hover{background:#f8f8f6}
+body.dk .card:hover{background:#1e1e1e}
+.card-body{flex:1;min-width:0}
+.card-title{font-size:13px;font-weight:500;color:#1a1a1a;margin-bottom:2px}
+body.dk .card-title{color:#e0e0e0}
+.card-meta{font-size:11px;color:#aaa;margin-bottom:5px}
+body.dk .card-meta{color:#555}
+.card-excerpt{font-size:11px;color:#666;line-height:1.5}
+body.dk .card-excerpt{color:#888}
+.card-tags{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.ctag{font-size:10px;padding:1px 6px;border-radius:3px;border:.5px solid #e0dfdb;background:#f5f5f2;color:#666}
+body.dk .ctag{background:#1e1e1e;border-color:#2a2a2a;color:#555}
+.card-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+.role-badge{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;padding:2px 7px;border-radius:3px;background:#FAEEDA;color:#854F0B}
+body.dk .role-badge{background:#2e1c06;color:#EF9F27}
+.status-badge{font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px;background:#E1F5EE;color:#085041}
+body.dk .status-badge{background:#0a3d2a;color:#5DCAA5}
+.status-badge.off{background:#f5f5f2;color:#888;border:.5px solid #e0dfdb}
+body.dk .status-badge.off{background:#1e1e1e;color:#555;border-color:#2a2a2a}
+.tier-badge{font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px;background:#E6F1FB;color:#185FA5}
+body.dk .tier-badge{background:#042C53;color:#85B7EB}
+.tier-b{font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px;background:#EEEDFE;color:#3C3489}
+body.dk .tier-b{background:#26215C;color:#AFA9EC}
+.stage-p3{font-size:10px;padding:2px 6px;border-radius:3px;background:#E1F5EE;color:#085041}
+.stage-p2{font-size:10px;padding:2px 6px;border-radius:3px;background:#EEEDFE;color:#3C3489}
+body.dk .stage-p3{background:#0a3d2a;color:#5DCAA5}
+body.dk .stage-p2{background:#26215C;color:#AFA9EC}
+.entity-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.eg-card{background:#f5f5f2;border-radius:var(--r-md);padding:9px 11px}
+body.dk .eg-card{background:#1e1e1e}
+.eg-l{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#aaa;font-weight:500;margin-bottom:3px}
+body.dk .eg-l{color:#555}
+.eg-v{font-size:12px;font-weight:500;color:#1a1a1a}
+body.dk .eg-v{color:#e0e0e0}
+.eg-s{font-size:10px;color:#aaa}
+body.dk .eg-s{color:#555}
+.section-card{border:.5px solid #e5e4e0;border-radius:var(--r-md);overflow:hidden;margin-bottom:12px}
+body.dk .section-card{border-color:#262626}
+.sc-head{padding:8px 12px;background:#f5f5f2;border-bottom:.5px solid #e5e4e0;display:flex;align-items:center;gap:6px}
+body.dk .sc-head{background:#1e1e1e;border-color:#262626}
+.sc-head-title{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;flex:1;color:#555}
+body.dk .sc-head-title{color:#777}
+.sc-head-meta{font-size:10px;color:#aaa}
+body.dk .sc-head-meta{color:#444}
+.sc-body{padding:12px}
+.pipeline-tbl{width:100%;border-collapse:collapse;font-size:11px}
+.pipeline-tbl th{font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#aaa;padding:0 10px 6px 0;font-weight:500;text-align:left;border-bottom:.5px solid #e5e4e0}
+body.dk .pipeline-tbl th{color:#444;border-color:#262626}
+.pipeline-tbl td{padding:7px 10px 7px 0;border-bottom:.5px solid #ebebea;vertical-align:middle}
+body.dk .pipeline-tbl td{border-color:#1f1f1f}
+.pipeline-tbl tr:last-child td{border-bottom:none}
+.asset-nm{font-weight:500;font-family:var(--mono);font-size:11px;color:#1a1a1a}
+body.dk .asset-nm{color:#e0e0e0}
+.thesis-text{font-size:12px;color:#333;line-height:1.7}
+body.dk .thesis-text{color:#aaa}
+.risk-block{margin-top:8px;padding:8px 10px;background:#FAEEDA;border-left:2px solid #EF9F27}
+body.dk .risk-block{background:#2e1c06}
+.risk-label{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#854F0B;font-weight:500;margin-bottom:2px}
+body.dk .risk-label{color:#EF9F27}
+.risk-text{font-size:11px;color:#633806;line-height:1.5}
+body.dk .risk-text{color:#FAC775}
+.sig-verdict{display:inline-flex;align-items:center;gap:3px;font-size:10px;padding:1px 6px;border-radius:3px;margin-top:3px}
+.sv-pos{background:#EAF3DE;color:#27500A}
+body.dk .sv-pos{background:#1a2f0a;color:#97C459}
+.sv-neu{background:#FAEEDA;color:#633806}
+body.dk .sv-neu{background:#2e1c06;color:#EF9F27}
+.sig-entry{display:flex;gap:10px;padding:6px 0;border-bottom:.5px solid #ebebea}
+.sig-entry:last-child{border-bottom:none}
+body.dk .sig-entry{border-color:#1f1f1f}
+.se-date{font-size:10px;font-family:var(--mono);color:#bbb;width:70px;flex-shrink:0;padding-top:1px}
+body.dk .se-date{color:#444}
+.se-text{font-size:11px;color:#1a1a1a;line-height:1.5}
+body.dk .se-text{color:#c8c8c8}
+.rq-item{padding:12px 14px;border-bottom:.5px solid #ebebea;display:flex;gap:12px;align-items:flex-start}
+body.dk .rq-item{border-color:#1f1f1f}
+.rq-item:hover{background:#f8f8f7}
+body.dk .rq-item:hover{background:#1a1a1a}
+.rq-left{flex:1}
+.rq-actions{display:flex;flex-direction:column;gap:5px;align-items:flex-end}
+.btn-approve{background:#E1F5EE!important;color:#085041!important;border-color:#9FE1CB!important}
+.btn-approve:hover{background:#9FE1CB!important}
+body.dk .btn-approve{background:#0a3d2a!important;color:#5DCAA5!important;border-color:#0a3d2a!important}
+.btn-reject{background:#FCEBEB!important;color:#791F1F!important;border-color:#F7C1C1!important}
+.btn-reject:hover{background:#F7C1C1!important}
+body.dk .btn-reject{background:#2d0f0f!important;color:#F09595!important;border-color:#2d0f0f!important}
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.admin-card{border:.5px solid #e5e4e0;border-radius:var(--r-lg);padding:14px 16px;background:#fff}
+body.dk .admin-card{background:#1a1a1a;border-color:#262626}
+.admin-card h3{font-size:12px;font-weight:500;color:#1a1a1a;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+body.dk .admin-card h3{color:#e0e0e0}
+.admin-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:.5px solid #f0f0ee;font-size:11px}
+body.dk .admin-row{border-color:#1f1f1f}
+.admin-row:last-child{border-bottom:none}
+.admin-row-label{color:#555}
+body.dk .admin-row-label{color:#888}
+.admin-row-val{font-weight:500;color:#1a1a1a}
+body.dk .admin-row-val{color:#e0e0e0}
+.bbar-wrap{height:6px;background:#e5e4e0;border-radius:3px;flex:1;margin:0 10px}
+body.dk .bbar-wrap{background:#2a2a2a}
+.bbar{height:100%;border-radius:3px;background:#1D9E75}
+.bbar.warn{background:#EF9F27}
+.hdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;display:inline-block;margin-right:6px}
+.hd-g{background:#1D9E75}
+.hd-a{background:#EF9F27}
+.hd-r{background:#E24B4A}
+.wl-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:.5px solid #ebebea;font-size:12px}
+body.dk .wl-item{border-color:#1f1f1f}
+.wl-tick{font-family:var(--mono);font-size:11px;font-weight:500;width:55px;color:#0F6E56}
+body.dk .wl-tick{color:#5DCAA5}
+.wl-name{flex:1;color:#1a1a1a}
+body.dk .wl-name{color:#c8c8c8}
+.wl-sigs{font-size:10px;color:#aaa;width:60px;text-align:right}
+body.dk .wl-sigs{color:#444}
+.sp-item{border:.5px solid #e5e4e0;border-radius:var(--r-md);padding:12px 14px;margin-bottom:8px;background:#fff}
+body.dk .sp-item{background:#1a1a1a;border-color:#262626}
+.sp-head{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.sp-name{font-size:13px;font-weight:500;color:#1a1a1a}
+body.dk .sp-name{color:#e0e0e0}
+.sp-ver{font-size:10px;font-family:var(--mono);color:#aaa;background:#f5f5f2;padding:1px 5px;border-radius:3px}
+body.dk .sp-ver{color:#555;background:#1e1e1e}
+.sp-entity{font-size:10px;padding:1px 6px;border-radius:3px;background:#E6F1FB;color:#185FA5;margin-left:auto}
+body.dk .sp-entity{background:#042C53;color:#85B7EB}
+.sp-thesis{font-size:10px;padding:1px 6px;border-radius:3px;background:#FAEEDA;color:#854F0B;margin-left:auto}
+body.dk .sp-thesis{background:#2e1c06;color:#EF9F27}
+.sp-desc{font-size:11px;color:#666;line-height:1.5;margin-bottom:6px}
+body.dk .sp-desc{color:#888}
+.sp-foot{display:flex;align-items:center;gap:6px;font-size:10px;color:#aaa}
+body.dk .sp-foot{color:#444}
+.sp-pin{font-size:10px;padding:1px 6px;border-radius:3px;background:#EEEDFE;color:#3C3489}
+body.dk .sp-pin{background:#26215C;color:#AFA9EC}
+.src-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:.5px solid #ebebea}
+body.dk .src-item{border-color:#1f1f1f}
+.src-item:last-child{border-bottom:none}
+.src-icon{width:28px;height:28px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:13px;background:#E6F1FB;color:#185FA5;flex-shrink:0}
+body.dk .src-icon{background:#042C53;color:#85B7EB}
+.src-icon-b{background:#EEEDFE;color:#534AB7}
+body.dk .src-icon-b{background:#26215C;color:#AFA9EC}
+.src-name{font-size:12px;font-weight:500;color:#1a1a1a}
+body.dk .src-name{color:#c8c8c8}
+.src-meta{font-size:10px;color:#aaa}
+body.dk .src-meta{color:#444}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#d4d3ce;border-radius:2px}
+body.dk ::-webkit-scrollbar-thumb{background:#2e2e2e}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <span class="page-title">TriggerPoint · Design preview</span>
+  <div class="toggle-wrap">
+    <button class="tgl on" id="btn-light" onclick="setMode('light')"><i class="ti ti-sun" style="font-size:12px"></i>Light</button>
+    <button class="tgl" id="btn-dark" onclick="setMode('dark')"><i class="ti ti-moon" style="font-size:12px"></i>Dark</button>
+  </div>
+</div>
+
+<div class="app">
+  <div class="sb">
+    <div class="logo-row">
+      <div class="lm">S</div>
+      <span class="ln">TriggerPoint</span>
+    </div>
+    <div class="nav">
+      <div class="nsec">Monitor</div>
+      <div class="ni act" data-view="signals"><i class="ti ti-bolt nic"></i>Signal feed<span class="nb">4</span></div>
+      <div class="ni" data-view="review"><i class="ti ti-user-check nic"></i>Review queue<span class="nb w">2</span></div>
+      <div class="nsec">Intelligence layer</div>
+      <div class="ni" data-view="entities"><i class="ti ti-brain nic"></i>Entities</div>
+      <div class="ni" data-view="golden"><i class="ti ti-book nic"></i>Golden docs</div>
+      <div class="ni" data-view="sources"><i class="ti ti-rss nic"></i>Sources</div>
+      <div class="nsec">Research</div>
+      <div class="ni" data-view="watchlist"><i class="ti ti-star nic"></i>Watchlist</div>
+      <div class="ni" data-view="prompts"><i class="ti ti-file-description nic"></i>Standing prompts</div>
+      <div class="nsec">Admin</div>
+      <div class="ni" data-view="admin"><i class="ti ti-settings nic"></i>Admin</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <span class="tb-title" id="view-title">Signal feed</span>
+      <span class="tb-meta" id="topbar-meta"><span class="pulse"></span>Live · just now</span>
+      <div style="display:flex;gap:6px" id="topbar-btns">
+        <button class="btn"><i class="ti ti-sliders-horizontal"></i>Filter</button>
+        <button class="btn btn-p"><i class="ti ti-bell"></i>Subscribe</button>
+      </div>
+    </div>
+
+    <!-- SIGNAL FEED -->
+    <div class="view active" id="view-signals">
+      <div class="stats">
+        <div class="sc"><div class="sc-l">Signals today</div><div class="sc-v">24</div><div class="sc-s">↑ 3 vs. yesterday</div></div>
+        <div class="sc"><div class="sc-l">High confidence</div><div class="sc-v">71%</div><div class="sc-s">17 auto-delivered</div></div>
+        <div class="sc"><div class="sc-l">Pending review</div><div class="sc-v">2</div><div class="sc-s">Below 0.6 threshold</div></div>
+      </div>
+      <div class="tabbar">
+        <div class="tab act">All signals</div>
+        <div class="tab">Catalyst events</div>
+        <div class="tab">Silent passage</div>
+        <div class="tab">Contested</div>
+      </div>
+      <div class="panels">
+        <div class="feed">
+          <div class="sec-hd">Most recent</div>
+          <div class="sig sel" onclick="selectSig(this)">
+            <div class="sig-r1"><span class="tick">RVMD</span><span class="cp ch">High · 0.91</span><span class="st">May 6, 2026</span></div>
+            <div class="sig-hl">Form 8-K — Unscheduled material corporate events: financial results and operating updates</div>
+            <div class="sig-src">SEC EDGAR · <a href="https://www.sec.gov/Archives/edgar/data/1628171/0001193125-26-208918-index.html" target="_blank" style="color:inherit;text-decoration:underline;text-underline-offset:2px">SEC filing</a> · <a href="https://ir.revmed.com/sec-filings/" target="_blank" style="color:inherit;text-decoration:underline;text-underline-offset:2px">IR page</a></div>
+            <div class="sig-tags"><span class="stag">Form 8-K</span><span class="stag">financial results</span><span class="stag">operating update</span></div>
+          </div>
+          <div class="sig" onclick="selectSig(this)">
+            <div class="sig-r1"><span class="tick">RVMD</span><span class="cp ch">High · 0.87</span><span class="st">May 6, 2026</span></div>
+            <div class="sig-hl">Form 10-Q — Quarterly report for period ending March 31, 2026: financial position and pipeline updates</div>
+            <div class="sig-src">SEC EDGAR · <a href="https://last10k.com/sec-filings/rvmd" target="_blank" style="color:inherit;text-decoration:underline;text-underline-offset:2px">last10k</a> · <a href="https://www.nasdaq.com/market-activity/stocks/rvmd/sec-filings" target="_blank" style="color:inherit;text-decoration:underline;text-underline-offset:2px">Nasdaq</a> · <a href="https://ir.revmed.com/sec-filings/" target="_blank" style="color:inherit;text-decoration:underline;text-underline-offset:2px">IR page</a></div>
+            <div class="sig-tags"><span class="stag">Form 10-Q</span><span class="stag">quarterly report</span><span class="stag">Q1 2026</span></div>
+          </div>
+          <div class="sig" onclick="selectSig(this)">
+            <div class="sig-r1"><span class="tick">RVMD</span><span class="cp cm">Mid · 0.61</span><span class="st">4 hr ago</span></div>
+            <div class="sig-hl">$45M PIPE at 22% dilution — strategic financing post-readout</div>
+            <div class="sig-src">SEC 8-K · pending reviewer</div>
+            <div class="sig-tags"><span class="stag">financing</span><span class="stag">dilution</span><span class="stag">pending review</span></div>
+          </div>
+          <div class="sec-hd" style="position:relative;top:auto">Earlier</div>
+          <div class="sig" onclick="selectSig(this)">
+            <div class="sig-r1"><span class="tick">RNVX</span><span class="cp ch">High · 0.83</span><span class="st">Yesterday</span></div>
+            <div class="sig-hl">FDA grants Breakthrough Therapy Designation for RNV-220</div>
+            <div class="sig-src">FDA press release · 4 citations</div>
+            <div class="sig-tags"><span class="stag">BTD</span><span class="stag">regulatory</span></div>
+          </div>
+          <div class="sig" onclick="selectSig(this)">
+            <div class="sig-r1"><span class="tick">RNVX</span><span class="cp cl">Low · 0.44</span><span class="st">Yesterday</span></div>
+            <div class="sig-hl">Unverified benchmark data circulating on RNV-220 interim efficacy</div>
+            <div class="sig-src">1 unverified source · review required</div>
+            <div class="sig-tags"><span class="stag">unverified</span><span class="stag">interim data</span></div>
+          </div>
+        </div>
+        <div class="detail-pane">
+          <div class="dp">
+            <div class="dp-tick">RVMD · SEC EDGAR · Form 8-K</div>
+            <div class="dp-hl">Form 8-K — Unscheduled material corporate events: financial results and operating updates (May 6, 2026)</div>
+            <div class="dp-meta"><span>May 6, 2026</span><span>Material event</span><span>Auto-delivered</span></div>
+            <div class="blk">
+              <div class="blk-t">Confidence breakdown</div>
+              <div class="cbr"><span class="cbl">Source quality</span><div class="cbt"><div class="cbf" style="width:98%"></div></div><span class="cbp">0.98</span></div>
+              <div class="cbr"><span class="cbl">Wiki alignment</span><div class="cbt"><div class="cbf" style="width:90%"></div></div><span class="cbp">0.90</span></div>
+              <div class="cbr"><span class="cbl">Thesis match</span><div class="cbt"><div class="cbf" style="width:88%"></div></div><span class="cbp">0.88</span></div>
+              <div class="cbr"><span class="cbl">Cross-venue</span><div class="cbt"><div class="cbf" style="width:85%"></div></div><span class="cbp">0.85</span></div>
+            </div>
+            <div class="blk">
+              <div class="blk-t">Evidence · 2 citations</div>
+              <div class="ev">SEC EDGAR filing index — Form 8-K reporting unscheduled material events and financial results<div class="evc"><a href="https://www.sec.gov/Archives/edgar/data/1628171/0001193125-26-208918-index.html" target="_blank" style="color:inherit;text-underline-offset:2px">canonical:EDGAR/RVMD-8K-20260506</a></div></div>
+              <div class="ev">Revolution Medicines investor relations — SEC filings archive<div class="evc"><a href="https://ir.revmed.com/sec-filings/" target="_blank" style="color:inherit;text-underline-offset:2px">canonical:IR/revmed-sec-filings</a></div></div>
+            </div>
+            <div class="act-row">
+              <button class="btn" onclick="switchView('entities')">Entity page →</button>
+              <button class="btn" onclick="switchView('prompts')">Prompt →</button>
+            </div>
+            <div style="margin-top:6px"><button class="btn" style="width:100%;justify-content:center"><i class="ti ti-edit"></i>Suggest entity edit</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVIEW QUEUE -->
+    <div class="view" id="view-review">
+      <div class="stats">
+        <div class="sc"><div class="sc-l">Awaiting review</div><div class="sc-v">2</div><div class="sc-s">Oldest: 4 hr ago</div></div>
+        <div class="sc"><div class="sc-l">Approved today</div><div class="sc-v">7</div><div class="sc-s">Auto + manual</div></div>
+        <div class="sc"><div class="sc-l">Rejected today</div><div class="sc-v">1</div><div class="sc-s">Unverified source</div></div>
+      </div>
+      <div style="flex:1;overflow-y:auto">
+        <div class="sec-hd" style="position:relative;top:auto">Pending reviewer action</div>
+        <div class="rq-item">
+          <div class="rq-left">
+            <div class="sig-r1" style="margin-bottom:4px"><span class="tick">RVMD</span><span class="cp cm">Mid · 0.61</span><span class="st">4 hr ago</span></div>
+            <div class="sig-hl" style="margin-bottom:4px">$45M PIPE at 22% dilution — strategic financing post-readout</div>
+            <div class="sig-src" style="margin-bottom:6px">SEC 8-K · 1 citation</div>
+            <div style="font-size:11px;color:#854F0B;background:#FAEEDA;padding:5px 8px;border-radius:var(--r-sm)">Below threshold: wiki alignment score 0.52 — dilution impact on thesis unclear</div>
+          </div>
+          <div class="rq-actions">
+            <button class="btn btn-approve"><i class="ti ti-check"></i>Approve</button>
+            <button class="btn btn-reject"><i class="ti ti-x"></i>Reject</button>
+            <button class="btn" onclick="switchView('entities')">Entity →</button>
+          </div>
+        </div>
+        <div class="rq-item">
+          <div class="rq-left">
+            <div class="sig-r1" style="margin-bottom:4px"><span class="tick">RNVX</span><span class="cp cl">Low · 0.44</span><span class="st">Yesterday</span></div>
+            <div class="sig-hl" style="margin-bottom:4px">Unverified benchmark data circulating on RNV-220 interim efficacy</div>
+            <div class="sig-src" style="margin-bottom:6px">1 unverified source</div>
+            <div style="font-size:11px;color:#791F1F;background:#FCEBEB;padding:5px 8px;border-radius:var(--r-sm)">Low confidence: single unverified source, no cross-venue corroboration</div>
+          </div>
+          <div class="rq-actions">
+            <button class="btn btn-approve"><i class="ti ti-check"></i>Approve</button>
+            <button class="btn btn-reject"><i class="ti ti-x"></i>Reject</button>
+            <button class="btn" onclick="switchView('entities')">Entity →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENTITIES -->
+    <div class="view" id="view-entities">
+      <div class="content-area">
+        <div class="pg-hd">
+          <div class="pg-hd-l"><h2>Intelligence layer · Entities</h2><p>Auto-generated and researcher-maintained entity pages, versioned and cited</p></div>
+          <button class="btn btn-p"><i class="ti ti-plus"></i>New entity</button>
+        </div>
+        <div style="border:.5px solid #1D9E75;border-radius:var(--r-lg);overflow:hidden;margin-bottom:12px">
+          <div style="padding:12px 15px;background:#f0fdf8;display:flex;align-items:center;gap:10px;border-bottom:.5px solid #9FE1CB" id="acme-hd">
+            <span style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;background:#E1F5EE;color:#085041;padding:2px 7px;border-radius:3px">Company</span>
+            <span style="font-size:14px;font-weight:500;color:#1a1a1a" class="entity-name-txt">Revolution Medicines Inc.</span>
+            <span style="font-size:11px;font-family:var(--mono);color:#aaa">RVMD</span>
+            <span class="status-badge" style="margin-left:auto"><i class="ti ti-eye" style="font-size:10px"></i>Watching</span>
+            <button class="btn" style="font-size:10px;padding:3px 8px">v3 · Jun 5</button>
+          </div>
+          <div style="padding:14px 15px" id="acme-body">
+            <div class="entity-grid">
+              <div class="eg-card"><div class="eg-l">Entity type</div><div class="eg-v">Company · Ticker</div><div class="eg-s">Clinical-stage biotech</div></div>
+              <div class="eg-card"><div class="eg-l">Sub-industry</div><div class="eg-v">Oncology &amp; CNS</div><div class="eg-s">Small-cap</div></div>
+              <div class="eg-card"><div class="eg-l">Watch status</div><div class="eg-v" style="color:#0F6E56">Active</div><div class="eg-s">Phase 3 BLA track</div></div>
+            </div>
+            <div class="section-card">
+              <div class="sc-head"><i class="ti ti-flask" style="font-size:12px;color:#aaa"></i><span class="sc-head-title">Pipeline</span><span class="sc-head-meta">2 assets</span></div>
+              <div style="padding:0 12px">
+                <table class="pipeline-tbl">
+                  <thead><tr><th>Asset</th><th>Indication</th><th>Stage</th><th>Next catalyst</th></tr></thead>
+                  <tbody>
+                    <tr><td><span class="asset-nm">RMC-101</span></td><td style="font-size:11px;color:#333">Recurrent GBM</td><td><span class="stage-p3">Phase 3 · BLA prep</span></td><td style="font-size:11px;color:#aaa">FDA action date TBD</td></tr>
+                    <tr><td><span class="asset-nm">RMC-202</span></td><td style="font-size:11px;color:#333">Glioma prevention</td><td><span class="stage-p2">Phase 2</span></td><td style="font-size:11px;color:#aaa">Interim readout Q4 2026</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="section-card">
+              <div class="sc-head"><i class="ti ti-target" style="font-size:12px;color:#aaa"></i><span class="sc-head-title">Thesis</span><button class="btn" style="font-size:10px;padding:2px 7px;margin-left:auto"><i class="ti ti-edit"></i>Edit</button></div>
+              <div class="sc-body">
+                <div class="thesis-text">RMC-101 met its primary endpoint in SUMMIT-3 (HR 0.67, p=0.003). FDA Breakthrough Therapy Designation shortens the review timeline. BLA preparation is funded through the June 2026 PIPE ($45M).</div>
+                <div class="risk-block"><div class="risk-label"><i class="ti ti-alert-triangle" style="font-size:10px"></i> Key risk</div><div class="risk-text">FDA review outcome — no CMC or safety issues flagged to date.</div></div>
+              </div>
+            </div>
+            <div class="section-card">
+              <div class="sc-head"><i class="ti ti-bolt" style="font-size:12px;color:#aaa"></i><span class="sc-head-title">Recent signals</span><span class="sc-head-meta">3 signals</span><button class="btn" style="font-size:10px;padding:2px 7px;margin-left:8px" onclick="switchView('signals')">View all →</button></div>
+              <div style="padding:4px 12px">
+                <div class="sig-entry"><div class="se-date">Jun 5</div><div><div class="se-text">FDA accepted NDA filing for RMC-101</div><span class="sig-verdict sv-pos"><i class="ti ti-check" style="font-size:10px"></i>High conviction · positive</span></div></div>
+                <div class="sig-entry"><div class="se-date">May 14</div><div><div class="se-text">Phase 3 SUMMIT-3 primary endpoint met (HR 0.67, p=0.003)</div><span class="sig-verdict sv-pos"><i class="ti ti-check" style="font-size:10px"></i>High conviction · positive</span></div></div>
+                <div class="sig-entry"><div class="se-date">May 28</div><div><div class="se-text">$45M PIPE at 22% dilution</div><span class="sig-verdict sv-neu"><i class="ti ti-minus" style="font-size:10px"></i>Neutral · pending reviewer</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="border-radius:var(--r-lg)">
+          <div class="card-body">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+              <span style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;background:#E6F1FB;color:#185FA5;padding:2px 7px;border-radius:3px">Company</span>
+              <span class="card-title" style="margin:0">RNA Vaccines Inc.</span>
+              <span style="font-size:11px;font-family:var(--mono);color:#aaa">RNVX</span>
+            </div>
+            <div class="card-meta">Phase 2 · BTD granted Apr 2026 · last updated Jun 3</div>
+            <div class="card-tags"><span class="ctag">oncology</span><span class="ctag">mRNA platform</span><span class="ctag">phase 2</span></div>
+          </div>
+          <div class="card-right"><span class="status-badge">Watching</span><button class="btn" style="font-size:10px;padding:3px 8px">Open →</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GOLDEN DOCS -->
+    <div class="view" id="view-golden">
+      <div class="content-area">
+        <div class="pg-hd">
+          <div class="pg-hd-l"><h2>Golden documents</h2><p>Research methodology and industry definitions that anchor signal evaluation</p></div>
+          <button class="btn btn-p"><i class="ti ti-plus"></i>New document</button>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">Research methodology</div>
+            <div class="card-meta">Research methodology · Updated Jun 5, 2026</div>
+            <div class="card-excerpt">Defines the evaluation framework, source hierarchy, and confidence thresholds used across all signal pipelines.</div>
+            <div class="card-tags"><span class="ctag">source hierarchy</span><span class="ctag">confidence thresholds</span><span class="ctag">evaluation framework</span></div>
+          </div>
+          <div class="card-right"><span class="role-badge">Author</span><button class="btn" style="font-size:10px;padding:3px 8px">Open →</button></div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">RNA vaccines</div>
+            <div class="card-meta">Industry definition · Updated Jun 5, 2026</div>
+            <div class="card-excerpt">Defines the RNA vaccine industry scope, key entities, competitive boundaries, and canonical data sources used for ingestion.</div>
+            <div class="card-tags"><span class="ctag">industry scope</span><span class="ctag">entity catalog</span><span class="ctag">canonical sources</span></div>
+          </div>
+          <div class="card-right"><span class="role-badge">Author</span><button class="btn" style="font-size:10px;padding:3px 8px">Open →</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOURCES -->
+    <div class="view" id="view-sources">
+      <div class="content-area">
+        <div class="pg-hd">
+          <div class="pg-hd-l"><h2>Canonical sources</h2><p>Registered data sources polled for catalyst events and findings ingestion</p></div>
+          <button class="btn btn-p"><i class="ti ti-plus"></i>Add source</button>
+        </div>
+        <div class="section-card">
+          <div class="sc-head"><span class="sc-head-title">Tier A · Primary evidence</span><span class="sc-head-meta">3 sources · all healthy</span></div>
+          <div style="padding:0 12px">
+            <div class="src-item"><div class="src-icon"><i class="ti ti-building-bank"></i></div><div style="flex:1"><div class="src-name">SEC EDGAR</div><div class="src-meta">8-K, 10-K, 10-Q filings · polled every 15 min</div></div><span class="tier-badge">Tier A</span><span class="status-badge" style="margin-left:8px;display:flex;align-items:center;gap:3px"><span class="pulse" style="width:5px;height:5px"></span>Live</span></div>
+            <div class="src-item"><div class="src-icon"><i class="ti ti-clipboard-heart"></i></div><div style="flex:1"><div class="src-name">FDA press releases</div><div class="src-meta">Approvals, BTD, refuse-to-file · polled every 30 min</div></div><span class="tier-badge">Tier A</span><span class="status-badge" style="margin-left:8px;display:flex;align-items:center;gap:3px"><span class="pulse" style="width:5px;height:5px"></span>Live</span></div>
+            <div class="src-item"><div class="src-icon"><i class="ti ti-test-pipe"></i></div><div style="flex:1"><div class="src-name">ClinicalTrials.gov</div><div class="src-meta">Trial status, results, protocol updates · polled daily</div></div><span class="tier-badge">Tier A</span><span class="status-badge" style="margin-left:8px;display:flex;align-items:center;gap:3px"><span class="pulse" style="width:5px;height:5px"></span>Live</span></div>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="sc-head"><span class="sc-head-title">Tier B · Secondary evidence</span><span class="sc-head-meta">2 sources</span></div>
+          <div style="padding:0 12px">
+            <div class="src-item"><div class="src-icon src-icon-b"><i class="ti ti-news"></i></div><div style="flex:1"><div class="src-name">Reuters Health</div><div class="src-meta">News articles · polled every hour</div></div><span class="tier-b">Tier B</span><span class="status-badge" style="margin-left:8px;display:flex;align-items:center;gap:3px"><span class="pulse" style="width:5px;height:5px"></span>Live</span></div>
+            <div class="src-item"><div class="src-icon src-icon-b"><i class="ti ti-chart-line"></i></div><div style="flex:1"><div class="src-name">Evaluate Pharma</div><div class="src-meta">Pipeline &amp; market data · polled daily</div></div><span class="tier-b">Tier B</span><span class="status-badge off" style="margin-left:8px">Paused</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WATCHLIST -->
+    <div class="view" id="view-watchlist">
+      <div class="content-area">
+        <div class="pg-hd">
+          <div class="pg-hd-l"><h2>Watchlist</h2><p>Entities you're actively monitoring — signals are scoped to this list</p></div>
+          <button class="btn btn-p"><i class="ti ti-plus"></i>Add entity</button>
+        </div>
+        <div class="section-card">
+          <div class="sc-head"><span class="sc-head-title">Active</span><span class="sc-head-meta">2 entities</span></div>
+          <div style="padding:0 12px">
+            <div class="wl-item"><span class="wl-tick">RVMD</span><div style="flex:1"><div class="wl-name">Revolution Medicines Inc.</div><div class="src-meta">Clinical-stage oncology · Phase 3 BLA track</div></div><span class="status-badge">Active</span><span class="wl-sigs">3 signals</span><button class="btn" style="font-size:10px;padding:3px 8px;margin-left:8px" onclick="switchView('entities')">View →</button></div>
+            <div class="wl-item" style="border-bottom:none"><span class="wl-tick">RNVX</span><div style="flex:1"><div class="wl-name">RNA Vaccines Inc.</div><div class="src-meta">mRNA oncology platform · Phase 2</div></div><span class="status-badge">Active</span><span class="wl-sigs">2 signals</span><button class="btn" style="font-size:10px;padding:3px 8px;margin-left:8px" onclick="switchView('entities')">View →</button></div>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="sc-head"><span class="sc-head-title">Paused</span><span class="sc-head-meta">1 entity</span></div>
+          <div style="padding:0 12px">
+            <div class="wl-item" style="border-bottom:none"><span class="wl-tick" style="color:#aaa">MDGL</span><div style="flex:1"><div class="wl-name" style="color:#aaa">Madrigal Pharmaceuticals</div><div class="src-meta">Monitoring paused — thesis invalidated</div></div><span class="status-badge off">Paused</span><span class="wl-sigs">—</span><button class="btn" style="font-size:10px;padding:3px 8px;margin-left:8px">Resume →</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STANDING PROMPTS -->
+    <div class="view" id="view-prompts">
+      <div class="content-area">
+        <div class="pg-hd">
+          <div class="pg-hd-l"><h2>Standing prompts</h2><p>Compact prompt family distilled from the intelligence layer — routes incoming events to evaluation</p></div>
+          <button class="btn btn-p"><i class="ti ti-plus"></i>New prompt</button>
+        </div>
+        <div class="sp-item">
+          <div class="sp-head"><span class="sp-name">RVMD entity prompt</span><span class="sp-ver">v12</span><span class="sp-entity">Entity</span></div>
+          <div class="sp-desc">Evaluates catalyst events against Revolution Medicines Inc. thesis. Covers NDA/BLA track, Phase 3 readout criteria, FDA action windows, and dilution sensitivity thresholds.</div>
+          <div class="sp-foot"><i class="ti ti-clock" style="font-size:11px"></i>Distilled Jun 5, 2026<span style="margin-left:8px"><i class="ti ti-bolt" style="font-size:11px"></i>Last matched: FDA NDA acceptance</span><span class="sp-pin" style="margin-left:auto">Pinned</span></div>
+        </div>
+        <div class="sp-item">
+          <div class="sp-head"><span class="sp-name">RNVX entity prompt</span><span class="sp-ver">v4</span><span class="sp-entity">Entity</span></div>
+          <div class="sp-desc">Evaluates catalyst events against RNA Vaccines Inc. thesis. Covers BTD implications, Phase 2 interim readout criteria, and competitive positioning.</div>
+          <div class="sp-foot"><i class="ti ti-clock" style="font-size:11px"></i>Distilled Jun 3, 2026<span style="margin-left:8px"><i class="ti ti-bolt" style="font-size:11px"></i>Last matched: BTD grant</span></div>
+        </div>
+        <div class="sp-item">
+          <div class="sp-head"><span class="sp-name">RNA vaccines thesis prompt</span><span class="sp-ver">v2</span><span class="sp-thesis">Thesis</span></div>
+          <div class="sp-desc">Portfolio-level thesis prompt covering the mRNA oncology space. Evaluates cross-entity signals including regulatory precedent, competitive dynamics, and platform validation events.</div>
+          <div class="sp-foot"><i class="ti ti-clock" style="font-size:11px"></i>Distilled May 30, 2026<span style="margin-left:8px"><i class="ti ti-bolt" style="font-size:11px"></i>Last matched: 18 days ago</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div class="view" id="view-admin">
+      <div class="content-area">
+        <div class="pg-hd">
+          <div class="pg-hd-l"><h2>Admin</h2><p>Source scope, cost telemetry, pipeline health, and budget controls</p></div>
+        </div>
+        <div class="admin-grid">
+          <div class="admin-card">
+            <h3><i class="ti ti-heartbeat" style="font-size:14px;color:#1D9E75"></i>Pipeline health</h3>
+            <div class="admin-row"><span class="admin-row-label"><span class="hdot hd-g"></span>EDGAR poller</span><span class="admin-row-val">Healthy</span></div>
+            <div class="admin-row"><span class="admin-row-label"><span class="hdot hd-g"></span>FDA poller</span><span class="admin-row-val">Healthy</span></div>
+            <div class="admin-row"><span class="admin-row-label"><span class="hdot hd-a"></span>ClinicalTrials</span><span class="admin-row-val">Degraded · 2 retries</span></div>
+            <div class="admin-row"><span class="admin-row-label"><span class="hdot hd-g"></span>Wiki distillation</span><span class="admin-row-val">Healthy</span></div>
+            <div class="admin-row"><span class="admin-row-label"><span class="hdot hd-r"></span>Evaluate Pharma</span><span class="admin-row-val">Paused by admin</span></div>
+          </div>
+          <div class="admin-card">
+            <h3><i class="ti ti-coin" style="font-size:14px;color:#EF9F27"></i>Cost telemetry · June</h3>
+            <div class="admin-row"><span class="admin-row-label">Budget</span><span class="admin-row-val">$500 / month</span></div>
+            <div class="admin-row" style="border-bottom:none;padding-bottom:2px"><span class="admin-row-label">Spent</span><span class="admin-row-val">$187 (37%)</span></div>
+            <div style="padding:4px 0 8px"><div class="bbar-wrap" style="margin:0"><div class="bbar" style="width:37%"></div></div></div>
+            <div class="admin-row"><span class="admin-row-label">Signals evaluated</span><span class="admin-row-val">312</span></div>
+            <div class="admin-row"><span class="admin-row-label">Cost per signal</span><span class="admin-row-val">$0.60</span></div>
+            <div class="admin-row"><span class="admin-row-label">Projected month-end</span><span class="admin-row-val">~$410</span></div>
+          </div>
+          <div class="admin-card">
+            <h3><i class="ti ti-users" style="font-size:14px;color:#378ADD"></i>Researcher budgets</h3>
+            <div class="admin-row"><span class="admin-row-label">researcher-1</span><div style="display:flex;align-items:center;flex:1;margin-left:8px"><div class="bbar-wrap"><div class="bbar" style="width:45%"></div></div><span class="admin-row-val" style="white-space:nowrap">$90/$200</span></div></div>
+            <div class="admin-row"><span class="admin-row-label">researcher-2</span><div style="display:flex;align-items:center;flex:1;margin-left:8px"><div class="bbar-wrap"><div class="bbar warn" style="width:78%"></div></div><span class="admin-row-val" style="white-space:nowrap">$156/$200</span></div></div>
+            <div class="admin-row"><span class="admin-row-label">researcher-3</span><div style="display:flex;align-items:center;flex:1;margin-left:8px"><div class="bbar-wrap"><div class="bbar" style="width:18%"></div></div><span class="admin-row-val" style="white-space:nowrap">$36/$200</span></div></div>
+          </div>
+          <div class="admin-card">
+            <h3><i class="ti ti-history" style="font-size:14px;color:#534AB7"></i>Replay &amp; audit</h3>
+            <div class="admin-row"><span class="admin-row-label">Retention window</span><span class="admin-row-val">90 days</span></div>
+            <div class="admin-row"><span class="admin-row-label">Signals in archive</span><span class="admin-row-val">1,847</span></div>
+            <div class="admin-row"><span class="admin-row-label">Last replay run</span><span class="admin-row-val">Never</span></div>
+            <div style="margin-top:10px"><button class="btn" style="width:100%;justify-content:center"><i class="ti ti-player-play"></i>Run replay</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const titles = {signals:'Signal feed',review:'Review queue',entities:'Intelligence layer',golden:'Golden documents',sources:'Canonical sources',watchlist:'Watchlist',prompts:'Standing prompts',admin:'Admin'};
+
+function switchView(id) {
+  document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active')});
+  document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('act')});
+  var v = document.getElementById('view-'+id);
+  if(v) v.classList.add('active');
+  var ni = document.querySelector('.ni[data-view="'+id+'"]');
+  if(ni) ni.classList.add('act');
+  document.getElementById('view-title').textContent = titles[id]||id;
+  var meta = document.getElementById('topbar-meta');
+  meta.innerHTML = id==='signals' ? '<span class="pulse"></span>Live · just now' : '<span style="font-size:11px;color:#aaa">Updated Jun 9, 2026</span>';
+}
+
+document.querySelectorAll('.ni[data-view]').forEach(function(el){
+  el.addEventListener('click',function(){switchView(el.getAttribute('data-view'))});
+});
+
+function selectSig(el){
+  document.querySelectorAll('.sig').forEach(function(s){s.classList.remove('sel')});
+  el.classList.add('sel');
+}
+
+document.querySelectorAll('.tab').forEach(function(tab){
+  tab.addEventListener('click',function(){
+    var bar=tab.closest('.tabbar');
+    bar.querySelectorAll('.tab').forEach(function(t){t.classList.remove('act')});
+    tab.classList.add('act');
+  });
+});
+
+function setMode(m){
+  document.body.className = m==='dark'?'dk':'';
+  document.getElementById('btn-light').className='tgl'+(m==='light'?' on':'');
+  document.getElementById('btn-dark').className='tgl'+(m==='dark'?' on':'');
+}
+</script>
+</body>
+</html>
